@@ -7,11 +7,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ImageList from "./imageList";
 import List from "./list";
 
-type Topic = {
-  subtitle:string,
-  mainText:string,
-}
-
 type Props = { title: string , topics: Topic[] };
 
 export default function BasicAccordion({ title, topics } : Props): JSX.Element {

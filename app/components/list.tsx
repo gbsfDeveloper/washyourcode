@@ -5,11 +5,6 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import ImageList from "./imageList";
 
-type Topic = {
-    subtitle:string,
-    mainText:string,
-}
-
 type Props = { topics: Topic[] };
 
 export default function PinnedSubheaderList( { topics }: Props ) {
@@ -26,8 +21,8 @@ export default function PinnedSubheaderList( { topics }: Props ) {
       }}
       subheader={<li />}
     >
-      {topics.map((sectionId) => (
-        <li key={`section-${sectionId.subtitle}`}>
+      {topics.map((topic) => (
+        <li key={`section-${topic.subtitle}`}>
           <ul>
             <ListSubheader
                 sx={{
@@ -35,7 +30,7 @@ export default function PinnedSubheaderList( { topics }: Props ) {
                   color:"white"
                 }}
             >
-                <Typography variant="h6"> {`${sectionId.subtitle}`} </Typography>
+                <Typography variant="h6"> {`${topic.subtitle}`} </Typography>
             </ListSubheader>
             <Divider />
             {[0].map((item) => (
@@ -43,9 +38,9 @@ export default function PinnedSubheaderList( { topics }: Props ) {
                 display:'flex',
                 flexDirection:'column',
                 alignItems:'start',
-              }} key={`item-${sectionId.subtitle}-${item}`}>
-                <Typography> {`${sectionId.mainText}`} </Typography>
-                <ImageList></ImageList>
+              }} key={`item-${topic.subtitle}-${item}`}>
+                <Typography> {`${topic.mainText}`} </Typography>
+                <ImageList imageList={topic.imgRouteList}></ImageList>
               </ListItem>
             ))}
           </ul>
