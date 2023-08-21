@@ -7,9 +7,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ImageList from "./imageList";
 import List from "./list";
 
-type Props = { title: string , topics: Topic[] };
+type Props = { title: string, subTopics: Subtopics[] };
 
-export default function BasicAccordion({ title, topics } : Props): JSX.Element {
+export default function BasicAccordion({ title, subTopics } : Props): JSX.Element {
   
   return (
     <div>
@@ -29,7 +29,7 @@ export default function BasicAccordion({ title, topics } : Props): JSX.Element {
         </AccordionSummary>
 
         <AccordionDetails>
-          <List topics={topics}></List>
+          <List subTopics={subTopics}></List>
         </AccordionDetails>
 
       </Accordion>

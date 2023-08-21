@@ -20,9 +20,12 @@ export default function Home() {
 
   const [topics, setTopics] = useState([
     {
-      subtitle,
-      mainText,
-      imgRouteList:imgPropsTest
+      title: titleTest,
+      subTopics:[{
+        subtitle,
+        mainText,
+        imgRouteList:imgPropsTest
+      }]
     }
   ] as Topic[]);
 
@@ -32,7 +35,11 @@ export default function Home() {
       
         <Header></Header>
 
-        <Accordion title = {titleTest} topics = {topics} ></Accordion> 
+        {/* <Accordion topics = {topics} ></Accordion>  */}
+        
+        {topics.map((topic) => (
+          <Accordion title={topic.title} subTopics= {topic.subTopics} ></Accordion> 
+        ))}
         
         {/* <CreateTab title = {titleTest}></CreateTab> */}
       </div>
