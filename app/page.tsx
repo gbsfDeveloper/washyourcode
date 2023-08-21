@@ -34,14 +34,13 @@ export default function Home() {
       <div>
       
         <Header></Header>
-
-        {/* <Accordion topics = {topics} ></Accordion>  */}
         
-        {topics.map((topic) => (
-          <Accordion title={topic.title} subTopics= {topic.subTopics} ></Accordion> 
-        ))}
+        {
+          topics.map((topic) => (
+            <Accordion title={topic.title} subTopics= {topic.subTopics} ></Accordion> 
+          ))
+        }
         
-        {/* <CreateTab title = {titleTest}></CreateTab> */}
       </div>
     </main>
   )
