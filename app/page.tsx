@@ -32,7 +32,7 @@ export default function Home() {
       
         <Header></Header>
 
-        <Accordion title = {titleTest} topics = {topics} ></Accordion>
+        <Accordion title = {titleTest} topics = {topics} ></Accordion> 
         
         {/* <CreateTab title = {titleTest}></CreateTab> */}
       </div>
