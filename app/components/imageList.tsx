@@ -4,7 +4,7 @@ import ImageListItemBar from '@mui/material/ImageListItemBar';
 
 type Props = { imageList: imgPropertiesForTopics[] };
 
-export default function TitlebarBelowImageList({ imageList }: Props ): JSX.Element {
+export default function TitlebarBelowImageList({ imageList }:Props ): JSX.Element {
   return (
     <ImageList sx={{ width: 500 }} cols={2}>
       {imageList.map((item) => (

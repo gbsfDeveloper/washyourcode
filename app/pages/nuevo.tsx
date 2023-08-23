@@ -1,10 +1,10 @@
 "use client";
 // import {CreateTab} from "./components/tab";
-import Header from "./components/head";
-import Accordion from "./components/accordion";
+import Header from "../components/head";
+import Accordion from "../components/accordion";
 import { useState } from "react";
 
-export default function Home() {
+export default function Nuevo() {
   const rootUrl = process.env.PROJECT_ROOT_URL;
   console.log("rootUrl", rootUrl);
   
