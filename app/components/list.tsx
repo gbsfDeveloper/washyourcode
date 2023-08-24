@@ -8,7 +8,6 @@ import ImageList from "./imageList";
 type Props = { subTopics: Subtopics[] };
 
 export default function PinnedSubheaderList( { subTopics }: Props ) {
-    console.log(subTopics);
   return (
     <List
       sx={{

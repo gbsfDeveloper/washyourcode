@@ -2,35 +2,37 @@
 // import {CreateTab} from "./components/tab";
 import Header from "./components/head";
 import Accordion from "./components/accordion";
-import { useState } from "react";
+import { useState, useEffect  } from "react";
+import { Divider } from "@mui/material";
 
 export default function Home() {
-  const rootUrl = process.env.PROJECT_ROOT_URL;
-  console.log("rootUrl", rootUrl);
-  
-  const [ titleTest,setTitleTest ] = useState("2.1 Nombres con sentido");
-  
-  const [subtitle, setSubtitle] = useState('Usar nombres de variables que revelen las intenciones');
-  const [mainText, setMainText] = useState('Elegir y tomarse el tiempo necesario para darle nombres a las variables a largo plazo ahorrara tiempo de desarrollo y de analisis, la famosa frase cuando desarrolle este codigo dios y yo sabiamos que hacia , ahora solo dios sabe que hace');
-  const imgRoute = '/assets/imgs/section_2_img_1.png';
-  const language = 'Javascrip (JS)';
-  const imgPropsTest = [
+  const defaultTopic = [
     {
-      imgRoute,
-      language
-    }
-  ]
-
-  const [topics, setTopics] = useState([
-    {
-      title: titleTest,
+      title: '2.1 Nombres con sentido',
       subTopics:[{
-        subtitle,
-        mainText,
-        imgRouteList:imgPropsTest
+        subtitle:'Usar nombres de variables que revelen las intenciones',
+        mainText:'Elegir y tomarse el tiempo necesario para darle nombres a las variables a largo plazo ahorrara tiempo de desarrollo y de analisis, la famosa frase cuando desarrolle este codigo dios y yo sabiamos que hacia , ahora solo dios sabe que hace',
+        imgRouteList:[{
+          imgRoute:'/assets/imgs/section_2_img_1.png',
+          language:'Javascrip (JS)'
+        }]
       }]
     }
-  ] as Topic[]);
+  ] as Topic[];
+  const [isLoading, setLoading] = useState(true)
+  const [topics, setTopics] = useState(defaultTopic);
+  // const rootUrl = process.env.PROJECT_ROOT_URL;
+  useEffect(() => {
+    fetch('/api/lessons')
+      .then((res) => res.json())
+      .then((data) => {
+        setTopics(data.topicsData);
+        setLoading(false);
+      })
+  }, [])
+  
+  if (isLoading) return <p>Loading...</p>;
+  if (!topics) return <p>No topics data</p>;
 
   return (
     <main>
@@ -40,7 +42,10 @@ export default function Home() {
         
         {
           topics.map((topic) => (
-            <Accordion title={topic.title} subTopics= {topic.subTopics} ></Accordion> 
+            <> 
+              <Accordion key={topic.title} title={topic.title} subTopics= {topic.subTopics} ></Accordion>
+              <Divider /> 
+            </> 
           ))
         }
         

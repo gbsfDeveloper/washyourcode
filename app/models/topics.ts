@@ -1,4 +1,4 @@
-import {Document,Schema,Types, model} from 'mongoose'
+import {Document,Schema,Types, model, models} from 'mongoose'
 
 export interface MainTopic extends Document{
     _id: Types.ObjectId;
@@ -7,12 +7,11 @@ export interface MainTopic extends Document{
 }
 
 export const mainTopicSchema = new Schema<MainTopic>({
-    _id: Types.ObjectId,
     title : String,
     subTopics: Array<Subtopics>
 });
 
-export const MainTopicModel = model<MainTopic>(
+export const MainTopicModel = models.MainTopic ||  model<MainTopic>(
     'MainTopic',
     mainTopicSchema
-)
+);
