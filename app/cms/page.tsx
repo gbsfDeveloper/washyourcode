@@ -3,7 +3,7 @@ import { Button, Fab, Grid, IconButton, SpeedDial, SpeedDialAction, SpeedDialIco
 import { ThemeProvider, createTheme } from '@mui/system';
 import TextField from '@mui/material/TextField';
 import AddIcon from '@mui/icons-material/Add';
-import { useState, useEffect, useRef, SetStateAction, Dispatch, ChangeEvent } from "react";
+import { useState, useEffect, useRef, SetStateAction, Dispatch, ChangeEvent, MouseEvent } from "react";
 // import useViewport from '../lib/hooks/useViewport';
 
 const theme = createTheme({
@@ -40,37 +40,43 @@ const useViewport = (
 }
 
 const Subtopic = ({id}:{id: string}) => {
-  const [existImageUploaded, setExistImageUploaded] = useState<boolean>(false);
-  const [image, setImage] = useState<File | null>(null);
+  const [existImageLoaded, setExistImageLoaded] = useState<boolean>(false);
+  const [actualImage, setImage] = useState<File | null>(null);
   const [createObjectURL, setCreateObjectURL] = useState<string | null>(null);
   
   const uploadToServer = async (
-    event: ChangeEvent<HTMLInputElement>,
+    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
   ) => {        
     const body = new FormData();
-    if(image){
-      body.append("file", image);    
-      const response = await fetch("/api/upload-image", {
+    if(actualImage){
+
+      body.append("file", actualImage);      
+      const rawResponse = await fetch("/api/upload-image", {
         method: "POST",
         body
       });
-    }
+      const response = await rawResponse.json();
+      console.log(response);
+      
+      if(!response.error){
+        setImage(null);
+        setExistImageLoaded(false);
+      }
+    } 
   };
 
-  // const uploadToClient = (
-  //     event: ChangeEvent<HTMLInputElement>,
-  //     // setImage:Dispatch<SetStateAction<string | null>>,
-  //     // setCreateObjectURL:Dispatch<SetStateAction<string | null>>
-  //   ) => {
-  //     if (event.target.files && event.target.files[0]) {
-  //       const i = event.target.files[0];
-  //       console.log("IMAGE files");
-  //       console.log(i);
-        
-  //       setImage(i);
-  //       setCreateObjectURL(URL.createObjectURL(i));
-  //     }
-  // };
+  const uploadToClient = (
+      event: ChangeEvent<HTMLInputElement>
+    ) => {
+      if (event.target.files && event.target.files[0]) {
+        const image = event.target.files[0];
+        console.log("IMAGE files");
+        console.log(image);
+        setImage(image);
+        setExistImageLoaded(true);
+        setCreateObjectURL(URL.createObjectURL(image));
+      }
+  };
 
   return (
     <div key={id} id={id} style={{display:'flex',flexDirection:'column',width:'100%', justifyContent:'center',alignItems:'center',}}>
@@ -85,17 +91,17 @@ const Subtopic = ({id}:{id: string}) => {
         type="file" 
         name="myImage" 
         onChange={ (event)=>{ 
-            // uploadToClient(event, setImage, setCreateObjectURL) 
+            uploadToClient(event) 
           } 
         } 
         style={{display:'none'}}
       />
 
       {
-        (!existImageUploaded) ?
+        (!existImageLoaded) ?
         <Button sx={{width:'50%'}} color="secondary" variant="contained" onClick={()=>{let imageInput = document.getElementById("imageInput");imageInput?.click()}}>Select Image</Button>
         :
-        <Button sx={{width:'50%'}} color="success" variant="contained" onClick={()=>{let imageInput = document.getElementById("imageInput");imageInput?.click()}}>Upload Image</Button>
+        <Button sx={{width:'50%'}} color="success" variant="contained" onClick={(event)=>{uploadToServer(event)}}>Upload Image</Button>
 
       }
 

@@ -1,35 +1,42 @@
-import { NextResponse,NextRequest } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
 import { MainTopicModel } from '@/app/models/topics';
 import dbConnect from '@/app/lib/mongodb';
 import { IncomingForm } from 'formidable'
 import { promises as fs } from 'fs'
 import mv from 'mv'
-import { IncomingMessage } from 'http';
+import type { IncomingMessage } from 'node:http';
+// import type { IncomingMessage } from 'http';
 
 export async function POST(
-  req: IncomingMessage,
-  _res: Response
+  req: NextRequest,
+  // res: NextResponse
   ) {
-    try { 
-      const data = await new Promise((resolve, reject) => {
-        const form = new IncomingForm()
-        
-         form.parse(req, (err, fields, files) => {
-             if (err) return reject(err)
-             console.log(fields, files)
-             console.log(files.file)
-            //  var oldPath = files.file.filepath;
-            //  var newPath = `./public/uploads/${files.file.originalFilename}`;
-            //  mv(oldPath, newPath, function(err) {
-            //  });
-             NextResponse.json({ fields, files });
-         })
-         NextResponse.json({ message: "NADA" });
-     });
-     console.log(data);
-     
+    try {
+
+      const formData = await req.formData();
+      const file = formData.get('file');
+      if(file){
+        console.log(file);
+        console.log(typeof formData.values());
+        // const fileBuffer = new Blob([file]);
+        const fileBuffer = file as Blob;
+        const buffer = Buffer.from(await fileBuffer.arrayBuffer());
+        fs.writeFile(`public/${fileBuffer.name}`, buffer);
+      }
+
+      // FOR MULTIPLE FILES
+      // const formDataEntryValues = Array.from(formData.values());
+      // for (const formDataEntryValue of formDataEntryValues) {
+      //   if (typeof formDataEntryValue === "object" && "arrayBuffer" in formDataEntryValue) {
+      //     const file = formDataEntryValue as unknown as Blob;
+      //     const buffer = Buffer.from(await file.arrayBuffer());
+      //     fs.writeFile(`public/${file.name}`, buffer);
+      //   }
+      // }
+
+      return NextResponse.json({ error:false, message: "File successful uploaded"}, { status: 200 });
     } catch (error) {
-      console.log(error);
-      return NextResponse.json({ message: "Error has ocurred", topicsData:["adasd"] });
+      // console.log(error);
+      return NextResponse.json({ error:true, message: "Error has ocurred" + error}, { status: 500 });
     }
 }
