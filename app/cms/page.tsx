@@ -42,8 +42,7 @@ const useViewport = (
 const Subtopic = ({id}:{id: string}) => {
   const [existImageLoaded, setExistImageLoaded] = useState<boolean>(false);
   const [actualImage, setImage] = useState<File | null>(null);
-  const [createObjectURL, setCreateObjectURL] = useState<string | null>(null);
-  
+    
   const uploadToServer = async (
     event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
   ) => {        
@@ -51,7 +50,8 @@ const Subtopic = ({id}:{id: string}) => {
     if(actualImage){
 
       body.append("file", actualImage);     
-      body.append("fileRoute", "");   
+      
+      body.append("fileRoute",`subtopic_${ parseInt(id) + 1 }`);   
       const rawResponse = await fetch("/api/upload-image", {
         method: "POST",
         body
@@ -71,11 +71,11 @@ const Subtopic = ({id}:{id: string}) => {
     ) => {
       if (event.target.files && event.target.files[0]) {
         const image = event.target.files[0];
+        event.target.value = "";
         console.log("IMAGE files");
         console.log(image);
         setImage(image);
         setExistImageLoaded(true);
-        setCreateObjectURL(URL.createObjectURL(image));
       }
   };
 

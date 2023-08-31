@@ -19,7 +19,6 @@ export async function POST(
       if(!file){
         return NextResponse.json({ error:false, message: "You need to upload a file"}, { status: 400 });
       }
-
       const fileRoute = formData.get('fileRoute');
       const DINAMIC_ROUTE = fileRoute ? `/${fileRoute}` : ``;
       const SAVE_FOLDER = `public/assets/imgs${DINAMIC_ROUTE}`;
@@ -28,11 +27,23 @@ export async function POST(
       if(!existFolder){
         await fsp.mkdir(SAVE_FOLDER);
       }
-
+      
       const fileAsBlob = file as Blob;
+
+      const fileNameList = fileAsBlob.name.split(".");
+      let dinamicNumber = 0;
+
+      let fileNewName = `img_${dinamicNumber}`;
+      const fileExtention = fileNameList[1];
+
+      while (fs.existsSync(`${SAVE_FOLDER}/${fileNewName}.${fileExtention}`)) {
+        dinamicNumber += 1;
+        fileNewName = `img_${dinamicNumber}`;
+      }
+
       const fileArrayBuffer = await fileAsBlob.arrayBuffer();
       const buffer = Buffer.from( fileArrayBuffer );
-      fsp.writeFile(`${SAVE_FOLDER}/${fileAsBlob.name}`, buffer);
+      fsp.writeFile(`${SAVE_FOLDER}/${fileNewName}.${fileExtention}`, buffer);
 
       return NextResponse.json({ error:false, message: "File successful uploaded"}, { status: 200 });
     } catch (error) {
