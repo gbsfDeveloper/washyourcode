@@ -50,7 +50,8 @@ const Subtopic = ({id}:{id: string}) => {
     const body = new FormData();
     if(actualImage){
 
-      body.append("file", actualImage);      
+      body.append("file", actualImage);     
+      body.append("fileRoute", "");   
       const rawResponse = await fetch("/api/upload-image", {
         method: "POST",
         body
@@ -78,6 +79,13 @@ const Subtopic = ({id}:{id: string}) => {
       }
   };
 
+  const onUploadButtonClick = (
+    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+  ) => {
+    let imageInput = document.getElementById(`sub_topic_input_${id}`);
+    imageInput?.click()
+  }
+
   return (
     <div key={id} id={id} style={{display:'flex',flexDirection:'column',width:'100%', justifyContent:'center',alignItems:'center',}}>
       <Typography sx={{textAlign:'left'}} variant="h6" gutterBottom component="div">
@@ -87,9 +95,8 @@ const Subtopic = ({id}:{id: string}) => {
       <TextField sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic3" label="Description" variant="filled" />
       
       <input 
-        id="imageInput" 
-        type="file" 
-        name="myImage" 
+        id={`sub_topic_input_${id}`} 
+        type="file"
         onChange={ (event)=>{ 
             uploadToClient(event) 
           } 
@@ -99,31 +106,13 @@ const Subtopic = ({id}:{id: string}) => {
 
       {
         (!existImageLoaded) ?
-        <Button sx={{width:'50%'}} color="secondary" variant="contained" onClick={()=>{let imageInput = document.getElementById("imageInput");imageInput?.click()}}>Select Image</Button>
+        <Button sx={{width:'50%'}} color="secondary" variant="contained" onClick={ (event)=>{ onUploadButtonClick(event) } }>Select Image</Button>
         :
-        <Button sx={{width:'50%'}} color="success" variant="contained" onClick={(event)=>{uploadToServer(event)}}>Upload Image</Button>
-
+        <Button sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadToServer(event) } }>Upload Image</Button>
       }
 
     </div>
   )
-}
-
-function createSubtopic(
-    subtopics:Subtopics[],
-    setSubtopics:Dispatch<SetStateAction<Subtopics[]>>
-  ){
-
-  const newSubTopic = [
-    {
-      subtitle:'',
-      mainText:'',
-      imgRouteList:[]
-    },
-    ...subtopics
-  ]
-  // console.log(newSubTopic);
-  setSubtopics(newSubTopic);
 }
 
 export default function CMS() {
@@ -136,6 +125,18 @@ export default function CMS() {
       useViewport(setWidth,setHeight);
   }, []);
 
+  const createSubtopic = () => {
+    const newSubTopic = [
+      {
+        subtitle:'',
+        mainText:'',
+        imgRouteList:[]
+      },
+      ...subtopics
+    ]
+    // console.log(newSubTopic);
+    setSubtopics(newSubTopic);
+  }
 
   const elements = subtopics.map(function(subtopic, index) {
     return <Subtopic key={`${index}`} id={`${index}`}></Subtopic>
@@ -147,7 +148,8 @@ export default function CMS() {
     backgroundColor:'#0063CC', 
     color:'white', 
     width:`100%`, 
-    height:`${Height}px`
+    minHeight:`${Height}px`,
+    height:`100%`
   };
 
   return (
@@ -166,7 +168,7 @@ export default function CMS() {
               <TextField sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic1" label="Title" variant="filled" />
               
               <Grid item xs={12} sx={{ p: '1rem 0rem', display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
-                <Fab color="primary" aria-label="add" onClick={()=>{createSubtopic(subtopics,setSubtopics)}}>
+                <Fab color="primary" aria-label="add" onClick={()=>{createSubtopic()}}>
                   <AddIcon />
                 </Fab>
                 <Typography sx={{ textAlign:'center' }} gutterBottom variant="subtitle1" component="div">
