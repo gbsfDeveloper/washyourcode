@@ -42,9 +42,9 @@ const useViewport = (
 const Subtopic = ({id}:{id: string}) => {
   const [existImageLoaded, setExistImageLoaded] = useState<boolean>(false);
   const [actualImage, setImage] = useState<File | null>(null);
-    
+
   const uploadToServer = async (
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
+    _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
   ) => {        
     const body = new FormData();
     if(actualImage){
@@ -66,28 +66,28 @@ const Subtopic = ({id}:{id: string}) => {
     } 
   };
 
-  const uploadToClient = (
+  const uploadToClient = ( 
       event: ChangeEvent<HTMLInputElement>
     ) => {
-      if (event.target.files && event.target.files[0]) {
-        const image = event.target.files[0];
-        event.target.value = "";
-        console.log("IMAGE files");
-        console.log(image);
+      const fileInput = event.target;
+      const filesArray = fileInput.files;
+      const image = ( filesArray && filesArray[0] ) ? filesArray[0] : null;
+      if (image) {
+        fileInput.value = "";
         setImage(image);
         setExistImageLoaded(true);
       }
   };
 
   const onUploadButtonClick = (
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+    _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => {
     let imageInput = document.getElementById(`sub_topic_input_${id}`);
     imageInput?.click()
   }
 
   return (
-    <div key={id} id={id} style={{display:'flex',flexDirection:'column',width:'100%', justifyContent:'center',alignItems:'center',}}>
+    <div key={id} id={id} style={{marginTop:'1.5rem', display:'flex',flexDirection:'column',width:'100%', justifyContent:'center',alignItems:'center',}}>
       <Typography sx={{textAlign:'left'}} variant="h6" gutterBottom component="div">
         Subtopic No.{parseInt(id) + 1}
       </Typography>  
@@ -134,7 +134,6 @@ export default function CMS() {
       },
       ...subtopics
     ]
-    // console.log(newSubTopic);
     setSubtopics(newSubTopic);
   }
 
