@@ -42,6 +42,7 @@ const useViewport = (
 const Subtopic = ({id}:{id: string}) => {
   const [existImageLoaded, setExistImageLoaded] = useState<boolean>(false);
   const [actualImage, setImage] = useState<File | null>(null);
+  const [saveTopicButtonEnabled, setSaveTopicButtonEnabled] = useState<boolean>(true);
 
   const uploadToServer = async (
     _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
@@ -110,6 +111,8 @@ const Subtopic = ({id}:{id: string}) => {
         :
         <Button sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadToServer(event) } }>Upload Image</Button>
       }
+
+      <Button disabled={ saveTopicButtonEnabled ? true : false} sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadToServer(event) } } >Save Topic</Button>
 
     </div>
   )
