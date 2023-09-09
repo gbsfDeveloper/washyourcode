@@ -3,7 +3,7 @@ import { Button, Fab, Grid, IconButton, SpeedDial, SpeedDialAction, SpeedDialIco
 import { ThemeProvider, createTheme } from '@mui/system';
 import TextField from '@mui/material/TextField';
 import AddIcon from '@mui/icons-material/Add';
-import { useState, useEffect, useRef, SetStateAction, Dispatch, ChangeEvent, MouseEvent } from "react";
+import { useState, useEffect, useRef, SetStateAction, Dispatch, ChangeEvent, MouseEvent, FormEvent } from "react";
 // import useViewport from '../lib/hooks/useViewport';
 
 const theme = createTheme({
@@ -42,7 +42,7 @@ const useViewport = (
 const Subtopic = ({id}:{id: string}) => {
   const [existImageLoaded, setExistImageLoaded] = useState<boolean>(false);
   const [actualImage, setImage] = useState<File | null>(null);
-  const [saveTopicButtonEnabled, setSaveTopicButtonEnabled] = useState<boolean>(true);
+  const [saveTopicButtonEnabled, setSaveTopicButtonEnabled] = useState<boolean>(false);
 
   const uploadToServer = async (
     _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
@@ -87,13 +87,34 @@ const Subtopic = ({id}:{id: string}) => {
     imageInput?.click()
   }
 
+  const onSubmitTopic = (
+    event: FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    if(actualImage){
+      formData.append("file", actualImage);
+    }
+    console.log(Array.from(formData.values()));
+  }
+
   return (
     <div key={id} id={id} style={{marginTop:'1.5rem', display:'flex',flexDirection:'column',width:'100%', justifyContent:'center',alignItems:'center',}}>
       <Typography sx={{textAlign:'left'}} variant="h6" gutterBottom component="div">
         Subtopic No.{parseInt(id) + 1}
-      </Typography>  
-      <TextField sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic2" label="SubTitle" variant="filled" />    
-      <TextField sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic3" label="Description" variant="filled" />
+      </Typography> 
+      <form onSubmit={onSubmitTopic}>
+        <TextField name={"UNO"} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic2" label="SubTitle" variant="filled" />    
+        <TextField name={"DOS"} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic3" label="Description" variant="filled" />  
+        {
+          (!existImageLoaded) ?
+          <Button sx={{width:'50%'}} color="secondary" variant="contained" onClick={ (event)=>{ onUploadButtonClick(event) } }>Select Image</Button>
+          :
+          <Button sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadToServer(event) } }>Upload Image</Button>
+        }
+
+        <Button type='submit' disabled={ saveTopicButtonEnabled ? true : false} sx={{width:'50%'}} color="success" variant="contained" >Save Topic</Button>
+      </form> 
       
       <input 
         id={`sub_topic_input_${id}`} 
@@ -105,14 +126,7 @@ const Subtopic = ({id}:{id: string}) => {
         style={{display:'none'}}
       />
 
-      {
-        (!existImageLoaded) ?
-        <Button sx={{width:'50%'}} color="secondary" variant="contained" onClick={ (event)=>{ onUploadButtonClick(event) } }>Select Image</Button>
-        :
-        <Button sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadToServer(event) } }>Upload Image</Button>
-      }
-
-      <Button disabled={ saveTopicButtonEnabled ? true : false} sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadToServer(event) } } >Save Topic</Button>
+      
 
     </div>
   )
