@@ -6,6 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect, useRef, SetStateAction, Dispatch, ChangeEvent, MouseEvent, FormEvent } from "react";
 // import useViewport from '../lib/hooks/useViewport';
 
+
 const theme = createTheme({
   palette: {
     background: {
@@ -43,6 +44,8 @@ const Subtopic = ({id}:{id: string}) => {
   const [existImageLoaded, setExistImageLoaded] = useState<boolean>(false);
   const [actualImage, setImage] = useState<File | null>(null);
   const [saveTopicButtonEnabled, setSaveTopicButtonEnabled] = useState<boolean>(false);
+  const [subtitle, setSubtitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
 
   const uploadToServer = async (
     _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
@@ -103,9 +106,9 @@ const Subtopic = ({id}:{id: string}) => {
       <Typography sx={{textAlign:'left'}} variant="h6" gutterBottom component="div">
         Subtopic No.{parseInt(id) + 1}
       </Typography> 
-      <form onSubmit={onSubmitTopic}>
-        <TextField name={"UNO"} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic2" label="SubTitle" variant="filled" />    
-        <TextField name={"DOS"} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic3" label="Description" variant="filled" />  
+      {/* <form onSubmit={onSubmitTopic}> */}
+        <TextField value={subtitle} onChange={(e)=>{ setSubtitle(e.target.value) }} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic2" label="SubTitle" variant="filled" />    
+        <TextField value={description} onChange={(e)=>{ setDescription(e.target.value) }} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic3" label="Description" variant="filled" />  
         {
           (!existImageLoaded) ?
           <Button sx={{width:'50%'}} color="secondary" variant="contained" onClick={ (event)=>{ onUploadButtonClick(event) } }>Select Image</Button>
@@ -113,8 +116,8 @@ const Subtopic = ({id}:{id: string}) => {
           <Button sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadToServer(event) } }>Upload Image</Button>
         }
 
-        <Button type='submit' disabled={ saveTopicButtonEnabled ? true : false} sx={{width:'50%'}} color="success" variant="contained" >Save Topic</Button>
-      </form> 
+        {/* <Button type='submit' disabled={ saveTopicButtonEnabled ? true : false} sx={{width:'50%'}} color="success" variant="contained" >Save Topic</Button> */}
+      {/* </form>  */}
       
       <input 
         id={`sub_topic_input_${id}`} 
@@ -154,7 +157,7 @@ export default function CMS() {
     setSubtopics(newSubTopic);
   }
 
-  const elements = subtopics.map(function(subtopic, index) {
+  const elements = subtopics.map(function(subtopic, index) {  
     return <Subtopic key={`${index}`} id={`${index}`}></Subtopic>
   });
   
@@ -181,7 +184,7 @@ export default function CMS() {
             </Grid>
             <Grid item xs={12} sx={{ display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
       
-              <TextField sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic1" label="Title" variant="filled" />
+              <TextField name={"TITLE"} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic1" label="Title" variant="filled" />
               
               <Grid item xs={12} sx={{ p: '1rem 0rem', display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
                 <Fab color="primary" aria-label="add" onClick={()=>{createSubtopic()}}>
