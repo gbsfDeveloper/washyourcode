@@ -130,7 +130,11 @@ const Subtopic = ({ id, subtopicData, subtopics,setSubtopics }:{ id: string, sub
           <Button sx={{width:'50%'}} color="secondary" variant="contained" onClick={ (event)=>{ onUploadButtonClick(event) } }>Select Image</Button>
           :
           // <Button sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadToServer() } }>Upload Image</Button>
-          <Alert severity="success"> Image Ready to upload </Alert>
+          <Alert sx={{width:'30%'}} severity="success"> 
+            {actualImage?.name} - Image Ready to upload  
+            <Button sx={{width:'100%'}} color="secondary" variant="contained" onClick={ (event)=>{ onUploadButtonClick(event) } }>Change Image</Button>
+          </Alert>
+            
         }
 
         {/* <Button type='submit' disabled={ saveTopicButtonEnabled ? true : false} sx={{width:'50%'}} color="success" variant="contained" >Save Topic</Button> */}
@@ -141,7 +145,6 @@ const Subtopic = ({ id, subtopicData, subtopics,setSubtopics }:{ id: string, sub
         type="file"
         onChange={ (event)=>{ 
             uploadToClient(event);
-            // onSaveSubtopic();
           } 
         } 
         style={{display:'none'}}
@@ -156,6 +159,7 @@ export default function CMS() {
   const [subtopics,setSubtopics] = useState<TSubtopicFiles[]>([]);
   const [Width,setWidth] = useState(0);
   const [Height,setHeight] = useState(0);
+  const [title, setTitle] = useState<string>("");
 
   useEffect(() => {
       useViewport(setWidth,setHeight);
@@ -174,13 +178,24 @@ export default function CMS() {
   }
 
   const uploadSubtopics = () => {
-    const body = new FormData();
+    
     if(subtopics.length <= 0){ 
-      console.log("El Array esta vacio");
+      return console.log("El Array esta vacio");
     }
-    for (const subtopic of subtopics) {
-      console.log(subtopic);
+
+    const body = new FormData();
+    body.append("title", title);
+    const subtopicsEntries = subtopics.entries();
+    for ( const [key, subtopic] of Array.from(subtopicsEntries) ) {
+      body.append(`subtitle_${key}`, subtopic.subtitle);
+      body.append(`mainText_${key}`, subtopic.mainText);
+      const imageFile = subtopic.imgs[0];
+      if(imageFile){
+        body.append(`file_${key}`, imageFile);
+      }
     }
+    console.log(Array.from(body.entries()));
+    
     // subtopics
     // body.append("file", actualImage);     
     // const rawResponse = await fetch("/api/upload-image", {
@@ -219,7 +234,7 @@ export default function CMS() {
             </Grid>
             <Grid item xs={12} sx={{ display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
       
-              <TextField name={"TITLE"} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic1" label="Title" variant="filled" />
+              <TextField value={title} onChange={(e)=>{ setTitle(e.target.value); }} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic1" label="Title" variant="filled" />
               
               <Grid item xs={12} sx={{ p: '1rem 0rem', display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
                 <Fab color="primary" aria-label="add" onClick={()=>{createSubtopic()}}>
