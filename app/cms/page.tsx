@@ -1,5 +1,5 @@
 "use client";
-import { Button, Fab, Grid, IconButton, SpeedDial, SpeedDialAction, SpeedDialIcon, Typography } from '@mui/material';
+import { Alert, Button, Fab, Grid, IconButton, SpeedDial, SpeedDialAction, SpeedDialIcon, Typography } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/system';
 import TextField from '@mui/material/TextField';
 import AddIcon from '@mui/icons-material/Add';
@@ -40,12 +40,17 @@ const useViewport = (
   return () => window.removeEventListener("resize", handleWindowResize);
 }
 
-const Subtopic = ({id}:{id: string}) => {
+const Subtopic = ({ id, subtopicData, subtopics,setSubtopics }:{ id: string, subtopicData:TSubtopicFiles , subtopics: TSubtopicFiles[], setSubtopics: Dispatch<SetStateAction<TSubtopicFiles[]>> }) => {
   const [existImageLoaded, setExistImageLoaded] = useState<boolean>(false);
   const [actualImage, setImage] = useState<File | null>(null);
   const [saveTopicButtonEnabled, setSaveTopicButtonEnabled] = useState<boolean>(false);
-  const [subtitle, setSubtitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  const [subtitle, setSubtitle] = useState<string>(subtopicData.subtitle);
+  const [description, setDescription] = useState<string>(subtopicData.mainText);
+  const subtopicNumber = parseInt(id) + 1;
+
+  useEffect(() => {
+    onSaveSubtopic();
+  }, [actualImage,subtitle,description]);
 
   const uploadToServer = async (
     _event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
@@ -101,19 +106,31 @@ const Subtopic = ({id}:{id: string}) => {
     console.log(Array.from(formData.values()));
   }
 
+  const onSaveSubtopic = () => {
+   
+    const idNumber = parseInt(id);
+    subtopics[idNumber] = {
+      subtitle: subtitle,
+      mainText: description,
+      imgs: (actualImage) ? [actualImage] : []
+    }
+    setSubtopics([...subtopics]);
+  }
+
   return (
     <div key={id} id={id} style={{marginTop:'1.5rem', display:'flex',flexDirection:'column',width:'100%', justifyContent:'center',alignItems:'center',}}>
       <Typography sx={{textAlign:'left'}} variant="h6" gutterBottom component="div">
-        Subtopic No.{parseInt(id) + 1}
+        Subtopic No.{subtopicNumber}
       </Typography> 
       {/* <form onSubmit={onSubmitTopic}> */}
-        <TextField value={subtitle} onChange={(e)=>{ setSubtitle(e.target.value) }} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic2" label="SubTitle" variant="filled" />    
-        <TextField value={description} onChange={(e)=>{ setDescription(e.target.value) }} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic3" label="Description" variant="filled" />  
+        <TextField value={subtitle} onChange={(e)=>{ setSubtitle(e.target.value); }} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic2" label="SubTitle" variant="filled" />    
+        <TextField value={description} onChange={(e)=>{ setDescription(e.target.value); }} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic3" label="Description" variant="filled" />  
         {
           (!existImageLoaded) ?
           <Button sx={{width:'50%'}} color="secondary" variant="contained" onClick={ (event)=>{ onUploadButtonClick(event) } }>Select Image</Button>
           :
-          <Button sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadToServer(event) } }>Upload Image</Button>
+          // <Button sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadToServer() } }>Upload Image</Button>
+          <Alert severity="success"> Image Ready to upload </Alert>
         }
 
         {/* <Button type='submit' disabled={ saveTopicButtonEnabled ? true : false} sx={{width:'50%'}} color="success" variant="contained" >Save Topic</Button> */}
@@ -123,13 +140,12 @@ const Subtopic = ({id}:{id: string}) => {
         id={`sub_topic_input_${id}`} 
         type="file"
         onChange={ (event)=>{ 
-            uploadToClient(event) 
+            uploadToClient(event);
+            // onSaveSubtopic();
           } 
         } 
         style={{display:'none'}}
       />
-
-      
 
     </div>
   )
@@ -137,7 +153,7 @@ const Subtopic = ({id}:{id: string}) => {
 
 export default function CMS() {
   
-  const [subtopics,setSubtopics] = useState<Subtopics[]>([]);
+  const [subtopics,setSubtopics] = useState<TSubtopicFiles[]>([]);
   const [Width,setWidth] = useState(0);
   const [Height,setHeight] = useState(0);
 
@@ -147,18 +163,37 @@ export default function CMS() {
 
   const createSubtopic = () => {
     const newSubTopic = [
+      ...subtopics,
       {
         subtitle:'',
         mainText:'',
-        imgRouteList:[]
+        imgs:[]
       },
-      ...subtopics
     ]
     setSubtopics(newSubTopic);
   }
 
-  const elements = subtopics.map(function(subtopic, index) {  
-    return <Subtopic key={`${index}`} id={`${index}`}></Subtopic>
+  const uploadSubtopics = () => {
+    const body = new FormData();
+    if(subtopics.length <= 0){ 
+      console.log("El Array esta vacio");
+    }
+    for (const subtopic of subtopics) {
+      console.log(subtopic);
+    }
+    // subtopics
+    // body.append("file", actualImage);     
+    // const rawResponse = await fetch("/api/upload-image", {
+    //   method: "POST",
+    //   body
+    // });
+    // const response = await rawResponse.json();
+    // console.log(response);
+    
+  }
+
+  const elements = subtopics.map(function(subtopicData, index) {  
+    return <Subtopic key={`${index}`} id={`${index}`} subtopicData={subtopicData} subtopics={subtopics} setSubtopics={setSubtopics}></Subtopic>
   });
   
   const containerStyles = { 
@@ -178,7 +213,7 @@ export default function CMS() {
           <Grid container spacing={2} sx={containerStyles}>
             
             <Grid item xs={12} sx={{ display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
-              <Typography sx={{textAlign:'center'}} variant="h6" gutterBottom component="div">
+              <Typography sx={{textAlign:'center', textTransform: 'uppercase'}} variant="h6" gutterBottom component="div">
                 Create a new topic
               </Typography>
             </Grid>
@@ -198,7 +233,9 @@ export default function CMS() {
               {elements}
 
             </Grid>
-            
+            <Grid item xs={12} sx={{ display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
+              <Button sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadSubtopics() } }>Save Topic</Button>
+            </Grid>
           </Grid>
         {/* </ThemeProvider> */}
       </div>

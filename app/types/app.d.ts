@@ -8,6 +8,12 @@ type Subtopics = {
     mainText:string,
     imgRouteList:imgPropertiesForTopics[]
 }
+
+type TSubtopicFiles = {
+    subtitle:string,
+    mainText:string,
+    imgs: Array<File | null>
+}
   
 type imgPropertiesForTopics = {
     imgRoute: string,
