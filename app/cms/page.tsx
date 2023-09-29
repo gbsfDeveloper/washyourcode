@@ -177,7 +177,7 @@ export default function CMS() {
     setSubtopics(newSubTopic);
   }
 
-  const uploadSubtopics = () => {
+  const uploadSubtopics = async () => {
     
     if(subtopics.length <= 0){ 
       return console.log("El Array esta vacio");
@@ -194,16 +194,16 @@ export default function CMS() {
         body.append(`file_${key}`, imageFile);
       }
     }
-    console.log(Array.from(body.entries()));
+    body.append(`subtopicsLenght`, `${subtopics.length}`);
     
-    // subtopics
-    // body.append("file", actualImage);     
-    // const rawResponse = await fetch("/api/upload-image", {
-    //   method: "POST",
-    //   body
-    // });
-    // const response = await rawResponse.json();
-    // console.log(response);
+    console.log(Array.from(body.entries()));
+       
+    const rawResponse = await fetch("/api/upload-topic", {
+      method: "POST",
+      body
+    });
+    const response = await rawResponse.json();
+    console.log(response);
     
   }
 

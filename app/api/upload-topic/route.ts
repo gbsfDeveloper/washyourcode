@@ -14,35 +14,56 @@ export async function POST(
     try {
 
       const formData = await req.formData();
-      // for ( const [key, element] of Array.from(formData) ) {
+      console.log('backend');
+      for ( const [key, element] of Array.from(formData) ) {
+        console.log(key, element);
+        
+        await dbConnect();
+        await MainTopicModel.create({
+          title: '2.1 Nombres con sentido',
+          subTopics:[{
+            subtitle:'Usar nombres de variables que revelen las intenciones',
+            mainText:'Elegir y tomarse el tiempo necesario para darle nombres a las variables a largo plazo ahorrara tiempo de desarrollo y de analisis, la famosa frase cuando desarrolle este codigo dios y yo sabiamos que hacia , ahora solo dios sabe que hace',
+            imgRouteList:[{
+              imgRoute:'/assets/imgs/section_2_img_1.png',
+              language:'Javascrip (JS)'
+            }]
+          }]
+        });
 
+        // guardar el registro
+        // obtener el id del registro
+        // con el id del registro crear la carpta necesaria y sobre esa guardar la imagenes
+        // donde el id es el nombre de la carpeta del tema 
+        // y la imagenes llevarian el nombre con la estructura: id_subtitle_{numero_de_subtopic}_img_{numero_imagen}
+
+      }
+      // const file = formData.get('file');
+      // const fileRoute = formData.get('fileRoute');
+      // const DINAMIC_ROUTE = fileRoute ? `/${fileRoute}` : ``;
+      // const SAVE_FOLDER = `public/assets/imgs${DINAMIC_ROUTE}`;
+      // const existFolder = fs.existsSync(SAVE_FOLDER);
+      
+      // if(!existFolder){
+      //   await fsp.mkdir(SAVE_FOLDER);
       // }
-      const file = formData.get('file');
-      const fileRoute = formData.get('fileRoute');
-      const DINAMIC_ROUTE = fileRoute ? `/${fileRoute}` : ``;
-      const SAVE_FOLDER = `public/assets/imgs${DINAMIC_ROUTE}`;
-      const existFolder = fs.existsSync(SAVE_FOLDER);
       
-      if(!existFolder){
-        await fsp.mkdir(SAVE_FOLDER);
-      }
-      
-      const fileAsBlob = file as Blob;
+      // const fileAsBlob = file as Blob;
 
-      const fileNameList = fileAsBlob.name.split(".");
-      let dinamicNumber = 0;
+      // const fileNameList = fileAsBlob.name.split(".");
+      // let dinamicNumber = 0;
 
-      let fileNewName = `img_${dinamicNumber}`;
-      const fileExtention = fileNameList[1];
+      // let fileNewName = `img_${dinamicNumber}`;
+      // const fileExtention = fileNameList[1];
 
-      while (fs.existsSync(`${SAVE_FOLDER}/${fileNewName}.${fileExtention}`)) {
-        dinamicNumber += 1;
-        fileNewName = `img_${dinamicNumber}`;
-      }
+      // while (fs.existsSync(`${SAVE_FOLDER}/${fileNewName}.${fileExtention}`)) {
+      //   dinamicNumber += 1;
+      //   fileNewName = `img_${dinamicNumber}`;
+      // }
 
-      const fileArrayBuffer = await fileAsBlob.arrayBuffer();
-      const buffer = Buffer.from( fileArrayBuffer );
-      fsp.writeFile(`${SAVE_FOLDER}/${fileNewName}.${fileExtention}`, buffer);
+      // const fileArrayBuffer = await fileAsBlob.arrayBuffer();
+      // const buffer = Buffer.from( fileArrayBuffer );
+      // fsp.writeFile(`${SAVE_FOLDER}/${fileNewName}.${fileExtention}`, buffer);
 
       return NextResponse.json({ error:false, message: "File successful uploaded"}, { status: 200 });
     } catch (error) {
