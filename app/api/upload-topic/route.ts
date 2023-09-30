@@ -14,11 +14,9 @@ export async function POST(
   ) {
     try {
 
-      const formData = await req.formData();
       await dbConnect();
-
-      console.log('backend');
       
+      const formData = await req.formData();
       const topicTitle = formData.get('title') as unknown as string;
       const topicSavedObject = await MainTopicModel.create({
         title: topicTitle,
@@ -27,7 +25,6 @@ export async function POST(
       const topicId = topicSavedObject._id;
       
       const subtopicsLenght = formData.get('subtopicsLenght') as unknown as number;
-      const subtopics: Subtopics[] = [];
 
       for (let index = 0; index < subtopicsLenght; index++) {
         const subtitle = formData.get(`subtitle_${index}`) as unknown as string;

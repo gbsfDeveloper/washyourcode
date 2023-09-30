@@ -1,29 +1,8 @@
 "use client";
 import { Alert, Button, Fab, Grid, IconButton, SpeedDial, SpeedDialAction, SpeedDialIcon, Typography } from '@mui/material';
-import { ThemeProvider, createTheme } from '@mui/system';
 import TextField from '@mui/material/TextField';
 import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect, useRef, SetStateAction, Dispatch, ChangeEvent, MouseEvent, FormEvent } from "react";
-// import useViewport from '../lib/hooks/useViewport';
-
-
-const theme = createTheme({
-  palette: {
-    background: {
-      main: '#0063CC',
-    },
-    text: {
-      primary: 'white',
-      secondary: '#46505A',
-    },
-    action: {
-      active: '#001E3C',
-    },
-    success: {
-      dark: '#009688',
-    },
-  },
-});
 
 type TUseViewportSetState = Dispatch<SetStateAction<number>>;
 
@@ -194,16 +173,18 @@ export default function CMS() {
         body.append(`file_${key}`, imageFile);
       }
     }
+
     body.append(`subtopicsLenght`, `${subtopics.length}`);
-    
-    console.log(Array.from(body.entries()));
        
     const rawResponse = await fetch("/api/upload-topic", {
       method: "POST",
       body
     });
     const response = await rawResponse.json();
-    console.log(response);
+    console.log("AQUIIII",response);
+    if(!response.error){
+      window.location.reload();
+    }
     
   }
 
@@ -224,35 +205,33 @@ export default function CMS() {
   return (
     <main>
       <div>
-        {/* <ThemeProvider theme={theme}> */}
-          <Grid container spacing={2} sx={containerStyles}>
-            
-            <Grid item xs={12} sx={{ display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
-              <Typography sx={{textAlign:'center', textTransform: 'uppercase'}} variant="h6" gutterBottom component="div">
-                Create a new topic
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sx={{ display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
-      
-              <TextField value={title} onChange={(e)=>{ setTitle(e.target.value); }} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic1" label="Title" variant="filled" />
-              
-              <Grid item xs={12} sx={{ p: '1rem 0rem', display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
-                <Fab color="primary" aria-label="add" onClick={()=>{createSubtopic()}}>
-                  <AddIcon />
-                </Fab>
-                <Typography sx={{ textAlign:'center' }} gutterBottom variant="subtitle1" component="div">
-                  Add new subtopic
-                </Typography>
-              </Grid>
-
-              {elements}
-
-            </Grid>
-            <Grid item xs={12} sx={{ display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
-              <Button sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadSubtopics() } }>Save Topic</Button>
-            </Grid>
+        <Grid container spacing={2} sx={containerStyles}>
+          
+          <Grid item xs={12} sx={{ display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
+            <Typography sx={{textAlign:'center', textTransform: 'uppercase'}} variant="h6" gutterBottom component="div">
+              Create a new topic
+            </Typography>
           </Grid>
-        {/* </ThemeProvider> */}
+          <Grid item xs={12} sx={{ display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
+    
+            <TextField value={title} onChange={(e)=>{ setTitle(e.target.value); }} sx={{m: '1rem 0rem', width:'50%'}} id="outlined-basic1" label="Title" variant="filled" />
+            
+            {elements}
+            
+            <Grid item xs={12} sx={{ p: '1rem 0rem', display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
+              <Fab color="primary" aria-label="add" onClick={()=>{createSubtopic()}}>
+                <AddIcon />
+              </Fab>
+              <Typography sx={{ textAlign:'center' }} gutterBottom variant="subtitle1" component="div">
+                Add new subtopic
+              </Typography>
+            </Grid>              
+
+          </Grid>
+          <Grid item xs={12} sx={{ display: 'flex', flexDirection:'column', justifyContent:'center',alignContent:'center', alignItems:'center'}}>
+            <Button sx={{width:'50%'}} color="success" variant="contained" onClick={ (event)=>{ uploadSubtopics() } }>Save Topic</Button>
+          </Grid>
+        </Grid>
       </div>
     </main>
   )
