@@ -3,12 +3,14 @@ import {Document,Schema,Types, model, models} from 'mongoose'
 export interface MainTopic extends Document{
     _id: Types.ObjectId;
     title : String;
-    subTopics: Subtopics[]
+    subTopics: Types.ObjectId[]
 }
 
 export const mainTopicSchema = new Schema<MainTopic>({
     title : String,
-    subTopics: Array<Subtopics>
+    subTopics: Array<Types.ObjectId>
+},{
+    collection:'topics'
 });
 
 export const MainTopicModel = models.MainTopic ||  model<MainTopic>(
